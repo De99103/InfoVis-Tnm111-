@@ -79,7 +79,7 @@ def apply_quadrant_view(origin_idx):
                                 text=f"({sx0:.2f}, {sy0:.2f})",
                                 fill="purple",
                                 font=("Helvetica", 10, "bold"),
-                                anchor="center")
+                                anchor="nw")
     
     grid_items.extend([vline, hline, label])
 
@@ -107,6 +107,10 @@ def apply_quadrant_view(origin_idx):
         canvas.itemconfig(p["item"], fill=color)
 
 def on_left_click(event):
+
+    if event.num != 1:
+        return
+     
     global selected_index
     
     idx = find_clicked_point(event.x, event.y)
@@ -122,6 +126,10 @@ def on_left_click(event):
         selected_index = idx
         apply_quadrant_view(idx)
 
+
+def on_right_click(event):
+    reset_view()
+
 def map_x(x):
     return margin + (x - xmin) / (xmax - xmin) * range_x
 
@@ -130,7 +138,7 @@ def map_y(y):
 
 
 ## CURRENT DATA SET ##
-data = data1
+data = data2
 
 margin = 50 # margins for content
 h,w = 600,800 # h and w of entire GUI
@@ -165,24 +173,72 @@ for _, row in data.iterrows():
         "base_fill": BASE_FILLS.get(cat_index, "black")  # for resetting
     })
 
+# x axis ticks
+for i in range(ticks + 1):
+    # value in data space
+    val = xmin + i * (xmax - xmin) / ticks
+
+    # position in screen space
+    sx = map_x(val)
+    sy = h - margin
+
+    # tick mark
+    canvas.create_line(sx, sy, sx, sy + 5)
+
+    # label
+    canvas.create_text(
+        sx, sy + 15,
+        text=f"{val:.2f}",
+        anchor="n"
+    )
+    # y axis ticks
+for i in range(ticks + 1):
+    val = ymin + i * (ymax - ymin) / ticks
+
+    sx = margin
+    sy = map_y(val)
+
+    # tick mark
+    canvas.create_line(sx - 5, sy, sx, sy)
+
+    # label
+    canvas.create_text(
+        sx - 10, sy,
+        text=f"{val:.2f}",
+        anchor="e"
+    )
 
 
 
 ## LEGEND
-txt =""
+txt = ""
 shapes = ["square", "circle", "triangle", "star"]
 for i in range(categories.size):
     txt += categories[i] + ": " + shapes[i] + "\n"
 
-canvas.create_text(w-50, 50,text=txt)
+# create legend text first
+legend_text = canvas.create_text(
+    w - 50, 50,
+    text=txt,
+    anchor="ne",
+    fill="black"
+)
 
+# get bounding box of the text
+bbox = canvas.bbox(legend_text)
+pad = 6  # padding around the text
 
-# for col, row in data.iterrows():
-#     # last param is to find the unique category
-#     draw_point(map_x(row.x), map_y(row.y), (categories == row.category).nonzero()[0][0])
+# draw rectangle behind the text
+legend_box = canvas.create_rectangle(
+    bbox[0] - pad, bbox[1] - pad,
+    bbox[2] + pad, bbox[3] + pad,
+    outline="",
+    fill="lightgray"
+)
+
+# make sure text is on top of the rectangle
+canvas.tag_raise(legend_text, legend_box)
 
 
 canvas.bind("<Button-1>", on_left_click)
-print ("clicled idx:", selected_index)
-
 root.mainloop()
