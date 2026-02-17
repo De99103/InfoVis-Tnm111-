@@ -12,3 +12,4 @@ __pycache__/
 
 infovis-env/
 .vscode/
+.DS_Store
