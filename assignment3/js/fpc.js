@@ -72,6 +72,7 @@ function focusPlusContext(data) {
      * Task 4 - Define the brush for the context graph (Navigation)
      */
     var brush  =d3.brushX()
+    /* extent = defines the rectangular region (in pixel space) where the brush interaction can occur.*/ 
         .extent([[0,0],[width,height2]])
         .on("brush end", brushed);
 
@@ -89,6 +90,9 @@ function focusPlusContext(data) {
     /**
      * Task 5 - Set the axes scales, both for focus and context.
      */
+    /**
+     .domain = defines the data space that will be mapped to the visual space.
+     */
     xScale.domain([minDate, maxDate]);
     yScale.domain([minMag, maxMag]);
     navXScale.domain(xScale.domain());
@@ -98,6 +102,11 @@ function focusPlusContext(data) {
 
     /**
     * 1. Rendering the context chart
+    */
+   /**
+    * .append = inserts a new element with the specified name, and returns a reference to it.
+    * .attr = sets the value of an attribute for the selected elements. If the attribute already exists, then the value is updated; 
+    * otherwise, a new attribute is added with the specified name and value.
     */
 
     //Append g tag for plotting the dots and axes
@@ -127,8 +136,9 @@ function focusPlusContext(data) {
         .data(data.features)
         .enter().append("circle")
         .attr("class", "dotContext")
-        .filter(function (d) { return d.properties.EQ_PRIMARY != null })
-        .attr("cx", d => navXScale(parseDate(d.properties.Date)))
+        
+        .filter(function (d) { return d.properties.EQ_PRIMARY != null }) /** Only keep the data items where EQ_PRIMARY is NOT null. */
+        .attr("cx", d => navXScale(parseDate(d.properties.Date))) // cx: center x-coordinate 
         .attr("cy", d => navYScale(d.properties.EQ_PRIMARY));
 ;
      /**
@@ -137,7 +147,7 @@ function focusPlusContext(data) {
       */
     // Create a Points plotter instance (defined in plot_points.js) and use it
     var plotter = new Points();
-    plotter.plot(small_points, 3, 2);
+    plotter.plot(small_points, 3, 4);
 
 
     //<---------------------------------------------------------------------------------------------------->
@@ -156,7 +166,7 @@ function focusPlusContext(data) {
     focus.append("g")
     //here..
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(0," + height + ")") // move the x-axis to the bottom of the focus graph
         .call(xAxis);
     //here..
     focus.append("g")
@@ -187,10 +197,10 @@ function focusPlusContext(data) {
     .enter().append("circle")
     .attr("class", "dot")
     .attr("style", "opacity: 0.9;")
-    .filter(function (d) {
+    .filter(function (d) { // For each data item, run this function 
       return d.properties.EQ_PRIMARY != null;
     })
-    .attr("cx", function (d) {
+    .attr("cx", function (d) { // fucntion is used to set the x coordinate of the center of the circle
       return xScale(parseDate(d.properties.Date));
     })
     .attr("cy", function (d) {
