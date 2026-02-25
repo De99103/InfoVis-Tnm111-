@@ -1,15 +1,46 @@
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assignment 4 - Network Visualization</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Assignment 4 - Network Visualization</title>
 </head>
+
 <body>
-    <p> hi </p>
-  <div id="controls"></div>
+  <div id="controls">
+    <label> Min edge weight: <input type="range" id="rnge" min="1" max=maxEdge value="3" step="0.5"></label>
+    <div><span id="curVal"></span></div>
+  </div>
+
+  <div id=" drop_down">
+    <label for="charSelect">Character:</label>
+    <select id="charSelect"></select>
+  </div>
+
+  <label>
+    Episode in right view:
+    <select id="episodeSelect">
+      <option value="all">All</option>
+      <option value="1">Episode 1</option>
+      <option value="2">Episode 2</option>
+      <option value="3">Episode 3</option>
+      <option value="4">Episode 4</option>
+      <option value="5">Episode 5</option>
+      <option value="6">Episode 6</option>
+      <option value="7">Episode 7</option>
+    </select>
+  </label>
 
   <div id="views">
-    <svg id="view1"></svg>
-    <svg id="view2"></svg>
+    <div class="view">
+      <h3>All episodes</h3>
+      <svg id="view1"></svg>
+    </div>
+
+    <div class="view">
+      <h3>Selected Episode</h3>
+      <svg id="view2"></svg>
+    </div>
+
   </div>
 
   <script type="module" src="script.js"></script>
